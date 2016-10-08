@@ -8,6 +8,8 @@
 [Bb]uilds/
 Assets/AssetStoreTools*
 UnityGenerated/
+Assets/StreamingAssets/
+Assets/AudioClips/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -47,3 +49,6 @@ sysinfo.txt
 # Unity3D generated meta files
 # ============ #
 *.pidb.meta
+
+*.ogv
+*.mp4
