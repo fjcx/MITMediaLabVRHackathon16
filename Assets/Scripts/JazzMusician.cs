@@ -38,7 +38,7 @@ public class JazzMusician : MonoBehaviour {
     private void HandleOver()
     {
         Debug.Log("Over Musician: " + musicianName);
-        //gameController.FillSelectionBar();      // Fade Audio during this time ???
+        gameController.FillSelectionBar();      // Fade Audio during this time ???
         FadeJazz();
         uiText.enabled = true;
         //audioClip.play
@@ -53,7 +53,7 @@ public class JazzMusician : MonoBehaviour {
             currentVolume = jazzSource.volume;
             cancelFade = false;
             jazzSource.volume = jazzSource.volume * 0.1f;
-           // StartCoroutine(FadeJazzSlowly(0.5f));     // NOTE: this should be the same as the reticle filling time !!!!
+            //StartCoroutine(FadeJazzSlowly(0.5f));     // NOTE: this should be the same as the reticle filling time !!!!
         }
     }
 
@@ -66,7 +66,7 @@ public class JazzMusician : MonoBehaviour {
 
         jazzSource.volume = maxVol;
 
-        while (minVol < currvol && cancelFade == false)
+        while (minVol < maxVol && cancelFade == false)
         {
             jazzSource.volume = Mathf.Lerp(maxVol, minVol, currvol);
             currvol -= selectionWait * Time.deltaTime;
@@ -78,8 +78,10 @@ public class JazzMusician : MonoBehaviour {
 
     private void HandleOut()
     {
+        cancelFade = true;
+        atLowerVol = false;
         jazzSource.volume = currentVolume;
-        //gameController.CancelSelectionBar();
+        gameController.CancelSelectionBar();
         //audioClip.stop
         //gameController.UnFadeAudio();
         uiText.enabled = false;
