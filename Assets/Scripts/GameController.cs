@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour {
 
     public Transform player;
     public GameObject mainCamera;
+    public VideoSphere bandVidSphere;
     public VideoSphere vidSphere1;
     public VideoSphere vidSphere2;
 
@@ -23,9 +24,18 @@ public class GameController : MonoBehaviour {
     void Start () {
         blinkEffect = mainCamera.GetComponent<BlinkEffect>();
         showRecticleDot();
+
+        // Movie Player is weird and needs a late start !!!!
+        StartCoroutine(LateStart(0.5f));
     }
 
-    public void showRecticleDot ()
+    IEnumerator LateStart(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
+        // init spheres
+        bandVidSphere.PlayVideo();
+    }
+
+public void showRecticleDot ()
     {
         reticleSelection.enabled = false;
         reticleBackground.enabled = false;
@@ -52,7 +62,7 @@ public class GameController : MonoBehaviour {
 
     private IEnumerator FillReticleSelection(float selectionWait)
     {
-        Debug.Log("FillReticleSelection");
+        //Debug.Log("FillReticleSelection");
         float minSel = 0.0f;
         float maxSel = 1.0f;
         float currSel = minSel;

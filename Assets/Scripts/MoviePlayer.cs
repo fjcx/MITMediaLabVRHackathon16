@@ -204,7 +204,7 @@ public class MoviePlayer : MonoBehaviour
         // Video must start only after mediaFullPath is filled in
         Debug.Log("MovieSample Start");
 
-        // StartCoroutine(DelayedStartVideo());  // moved to seperate method
+         //StartCoroutine(DelayedStartVideo());  // moved to seperate method
         SetPaused(true);
     }
 
