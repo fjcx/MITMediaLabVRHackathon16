@@ -14,6 +14,10 @@ public class GameController : MonoBehaviour
     public List<VideoSphere> darkVidSpheres;
     public FireFlyController ffController;
 
+    // Hack, remove later !!!
+    public List<GameObject> lightVidSpheresObjects;
+    public List<GameObject> darkVidSpheresObjects;
+
     public AudioSource ffAudioSource;
 
     public int currentVidSphere;
@@ -43,6 +47,17 @@ public class GameController : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         // init spheres
         // bandVidSphere.PlayVideo();
+
+        foreach(GameObject go in darkVidSpheresObjects)
+        {
+            go.SetActive(false);
+        }
+
+        foreach (GameObject go in lightVidSpheresObjects)
+        {
+            go.SetActive(false);
+        }
+
         movePlayerToNextVidSphere(false);
     }
 
@@ -100,8 +115,8 @@ public void showRecticleDot ()
         ffController.EmptyQueue();
         lightVidSpheres[currentVidSphere].StopVideo();
 
-        lightVidSpheres[currentVidSphere].enabled = false;
-        darkVidSpheres[currentVidSphere].enabled = false;
+        darkVidSpheresObjects[currentVidSphere].SetActive(false);
+        lightVidSpheresObjects[currentVidSphere].SetActive(false);
 
         currentVidSphere++;
     }
@@ -110,6 +125,8 @@ public void showRecticleDot ()
     {
         //player.position = moveTo.transform.position;
         //bandSphere.StopVideo();
+        lightVidSpheresObjects[currentVidSphere].SetActive(true);
+        darkVidSpheresObjects[currentVidSphere].SetActive(true);
 
         if (currentVidSphere > 0)
         {
