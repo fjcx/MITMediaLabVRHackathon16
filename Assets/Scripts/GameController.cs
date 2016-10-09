@@ -100,6 +100,9 @@ public void showRecticleDot ()
         ffController.EmptyQueue();
         lightVidSpheres[currentVidSphere].StopVideo();
 
+        lightVidSpheres[currentVidSphere].enabled = false;
+        darkVidSpheres[currentVidSphere].enabled = false;
+
         currentVidSphere++;
     }
 
