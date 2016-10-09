@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class VideoSphere : MonoBehaviour {
 
     private AudioSource audioSource;
     private MoviePlayer moviePlayer;
+
+    [SerializeField]
+    public List<MoveQueueItem> fireflyTransitions;
 
     private bool isPlaying = false;
 

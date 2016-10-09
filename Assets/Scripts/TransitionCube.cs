@@ -31,7 +31,7 @@ public class TransitionCube : MonoBehaviour {
     private void HandleOver()
     {
         videoSphere.PlayVideo();
-        gameController.FillSelectionBar();
+        gameController.FillSelectionBar(1.0f);
     }
 
     private void HandleOut()

@@ -2,15 +2,21 @@
 using System.Collections;
 using UnityEngine.UI;
 using VRStandardAssets.Utils;
+using System.Collections.Generic;
 
-public class GameController : MonoBehaviour {
-
+public class GameController : MonoBehaviour
+{
 
     public Transform player;
     public GameObject mainCamera;
     public VideoSphere bandVidSphere;
-    public VideoSphere vidSphere1;
-    public VideoSphere vidSphere2;
+    public List<VideoSphere> lightVidSpheres;
+    public List<VideoSphere> darkVidSpheres;
+    public FireFlyController ffController;
+
+    public int currentVidSphere;
+    //public VideoSphere bandSphere;
+    //public VideoSphere birdDockSphere;
 
     public Image reticleDot;
     public Image reticleSelection;
@@ -19,6 +25,8 @@ public class GameController : MonoBehaviour {
     private BlinkEffect blinkEffect;
     private bool canBlink = true;
     private bool cancelSelection = true;
+
+    private bool cancelBlink = false;
 
     // Use this for initialization
     void Start () {
@@ -32,7 +40,8 @@ public class GameController : MonoBehaviour {
     IEnumerator LateStart(float waitTime) {
         yield return new WaitForSeconds(waitTime);
         // init spheres
-        bandVidSphere.PlayVideo();
+        // bandVidSphere.PlayVideo();
+        movePlayerToNextVidSphere(true);
     }
 
 public void showRecticleDot ()
@@ -48,7 +57,7 @@ public void showRecticleDot ()
     }
 
 
-    public void FillSelectionBar()
+    public void FillSelectionBar(float selectionTime)
     {
         Debug.Log("FillSelectionBar");
         reticleSelection.fillAmount = 0f;
@@ -57,7 +66,7 @@ public void showRecticleDot ()
         
         reticleDot.enabled = false;
         cancelSelection = false;
-        StartCoroutine(FillReticleSelection(0.5f));
+        StartCoroutine(FillReticleSelection(selectionTime));
     }
 
     private IEnumerator FillReticleSelection(float selectionWait)
@@ -84,45 +93,94 @@ public void showRecticleDot ()
         }
     }
 
+    public void clearSphere()
+    {
+        ffController.EmptyQueue();
+        lightVidSpheres[currentVidSphere].StopVideo();
+
+        currentVidSphere++;
+    }
+
+    public void movePlayerToNextVidSphere(bool isLight)
+    {
+        //player.position = moveTo.transform.position;
+        //bandSphere.StopVideo();
+
+        foreach (MoveQueueItem qi in lightVidSpheres[currentVidSphere].fireflyTransitions)
+        {
+            ffController.EnqueueMove(qi.targetPos, qi.timeToMove);
+        }
+
+        // TODO: do check for list length !!!
+
+        if (isLight) {
+            if (currentVidSphere < lightVidSpheres.Count) {
+                player.position = lightVidSpheres[currentVidSphere].transform.position;
+                darkVidSpheres[currentVidSphere].StopVideo();
+                lightVidSpheres[currentVidSphere].PlayVideo();
+            } else
+            {
+                Debug.Log("No more lightsphers");
+            }
+        } else {
+            if (currentVidSphere < darkVidSpheres.Count)
+            {
+                player.position = darkVidSpheres[currentVidSphere].transform.position;
+                lightVidSpheres[currentVidSphere].StopVideo();
+                darkVidSpheres[currentVidSphere].PlayVideo();
+            }
+            else
+            {
+                Debug.Log("No more lightsphers");
+            }
+        }
+    }
+
+    public void CancelBlinkTransit()
+    {
+        if (canBlink == false) {
+            cancelBlink = true;
+        }
+    }
 
     public void PlayBlinkEffect()
     {
         Debug.Log("Trying to Blink");
-        if (canBlink)
+        if (canBlink && cancelBlink == false)
         {
             canBlink = false;   // don't allow any blinking commands while in motion!!
             blinkEffect.enabled = true;
             //blinkEffect.enabled = evt.enable;
             //StartCoroutine(CloseEyes(evt.moveTo, evt.closeTimeSpreader, evt.openTimeSpreader, evt.blinkWait));
-            StartCoroutine(CloseEyes(vidSphere2.transform, 1.1f, 6f, 0f));
+            // StartCoroutine(CloseEyes(vidSphere2.transform, 1.1f, 6f, 0f));
+
+            StartCoroutine(CloseEyes(1.0f, 6f, 0f));
             // TODO: disable blink effect when not in use ??
         }
     }
 
-    public void movePlayerTo(Transform moveTo) {
-        player.position = moveTo.transform.position;
-        vidSphere1.StopVideo();
-    }
-
-
-    private IEnumerator CloseEyes(Transform moveTo, float closeTimeSpreader, float openTimeSpreader, float blinkWait)
+    private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait)
     {
         Debug.Log("CloseEyes!");
         float minMask = 0.0f;
         float maxMask = 1.3f;
         float currMask = minMask;
 
-        while (currMask < maxMask)
+        while (currMask < maxMask && cancelBlink == false)
         {
             blinkEffect.maskValue = Mathf.Lerp(minMask, maxMask, currMask);
             currMask += closeTimeSpreader * Time.deltaTime;
             yield return null;
         }
 
-        blinkEffect.maskValue = maxMask;
+        //blinkEffect.maskValue = maxMask;
 
-        //EventController.Instance.Publish(new TeleportPlayerEvent(moveTo));
-        //movePlayerTo(moveTo);
+        if (cancelBlink == false) {
+            //EventController.Instance.Publish(new TeleportPlayerEvent(moveTo));
+            //movePlayerTo(moveTo);
+            clearSphere();
+            movePlayerToNextVidSphere(true);        // TODO: can set to dark world
+        }
 
         yield return new WaitForSeconds(blinkWait);
         StartCoroutine(OpenEyes(openTimeSpreader));
@@ -133,7 +191,7 @@ public void showRecticleDot ()
         Debug.Log("OpenEyes!");
         float minMask = 0.0f;
         float maxMask = 1.3f;
-        float currMask = maxMask;
+        float currMask = blinkEffect.maskValue;
 
         while (currMask > minMask)
         {
@@ -144,5 +202,6 @@ public void showRecticleDot ()
 
         blinkEffect.maskValue = minMask;
         canBlink = true;
+        cancelBlink = false;
     }
 }
