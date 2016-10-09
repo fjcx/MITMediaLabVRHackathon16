@@ -14,6 +14,8 @@ public class GameController : MonoBehaviour
     public List<VideoSphere> darkVidSpheres;
     public FireFlyController ffController;
 
+    public AudioSource ffAudioSource;
+
     public int currentVidSphere;
     //public VideoSphere bandSphere;
     //public VideoSphere birdDockSphere;
@@ -105,6 +107,11 @@ public void showRecticleDot ()
     {
         //player.position = moveTo.transform.position;
         //bandSphere.StopVideo();
+
+        if (currentVidSphere > 0)
+        {
+            ffAudioSource.enabled = false;
+        }
 
         foreach (MoveQueueItem qi in lightVidSpheres[currentVidSphere].fireflyTransitions)
         {
