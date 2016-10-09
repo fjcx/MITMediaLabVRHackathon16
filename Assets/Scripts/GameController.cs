@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         // init spheres
         // bandVidSphere.PlayVideo();
-        movePlayerToNextVidSphere(true);
+        movePlayerToNextVidSphere(false);
     }
 
 public void showRecticleDot ()

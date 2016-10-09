@@ -7,6 +7,10 @@ public class VideoSphere : MonoBehaviour {
     private AudioSource audioSource;
     private MoviePlayer moviePlayer;
 
+    public bool useExternalAudioSources = false;
+    public AudioSource externalLeftChannel;
+    public AudioSource externalRightChannel;
+
     [SerializeField]
     public List<MoveQueueItem> fireflyTransitions;
 
@@ -32,6 +36,10 @@ public class VideoSphere : MonoBehaviour {
             //audioSource.Play();
             Debug.Log("Starting Video!");
             moviePlayer.StartVideo();
+            if (useExternalAudioSources) {
+                externalLeftChannel.Play();
+                externalRightChannel.Play();
+            }
         }
     }
 
@@ -42,6 +50,11 @@ public class VideoSphere : MonoBehaviour {
             isPlaying = false;
             //audioSource.Stop();
             moviePlayer.SetPaused(true);
+            if (useExternalAudioSources)
+            {
+                externalLeftChannel.Pause();
+                externalRightChannel.Pause();
+            }
         }
     }
 }
