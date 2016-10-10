@@ -11,7 +11,15 @@ public class JazzMusician : MonoBehaviour {
     public string musicianName;
     public AudioController audioController;
 
+    public GameObject trailSphere1;
+    public GameObject trailSphere2;
+    public GameObject trailSphere3;
+    public GameObject trailSphere4;
+    public GameObject transitSphere;
+
     public GameController gameController;
+
+    bool isShowSphereCancelled = true;
 
     public void Start() {
         uiText.text = musicianName;
@@ -37,7 +45,52 @@ public class JazzMusician : MonoBehaviour {
         musicianSource.Play();
         audioController.TryFadeJazz();
         uiText.enabled = true;
+        ShowTransitSpheres();
         //audioClip.play
+    }
+
+    public void ShowTransitSpheres()
+    {
+        isShowSphereCancelled = false;
+        StartCoroutine(ShowAllTransitSpheres());
+    }
+
+    private IEnumerator ShowAllTransitSpheres()
+    {
+        while(isShowSphereCancelled == false)
+        {
+            if (trailSphere1.activeSelf == false)
+            {
+                trailSphere1.SetActive(true);
+                yield return new WaitForSeconds(1f);
+            }
+            else if (trailSphere2.activeSelf == false)
+            {
+                trailSphere2.SetActive(true);
+                yield return new WaitForSeconds(1f);
+            }
+            else if (trailSphere3.activeSelf == false)
+            {
+                trailSphere3.SetActive(true);
+                yield return new WaitForSeconds(1f);
+            }
+            else if (trailSphere4.activeSelf == false)
+            {
+                trailSphere4.SetActive(true);
+                yield return new WaitForSeconds(0f);
+            }
+            else if (transitSphere.activeSelf == false)
+            {
+                transitSphere.SetActive(true);
+                yield return new WaitForSeconds(1f);
+            }
+            else
+            {
+                isShowSphereCancelled = true;
+            }
+        }
+        
+        yield return null;
     }
 
     private void HandleOut()
@@ -45,6 +98,7 @@ public class JazzMusician : MonoBehaviour {
         audioController.CancelFadeJazz();
         gameController.CancelSelectionBar();
         musicianSource.Pause();
+        isShowSphereCancelled = true;
         //audioClip.stop
         //gameController.UnFadeAudio();
         uiText.enabled = false;

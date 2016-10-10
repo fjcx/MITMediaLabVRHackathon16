@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour
     public List<GameObject> lightVidSpheresObjects;
     public List<GameObject> darkVidSpheresObjects;
 
+    public GameObject sceneChangeSphere;
+
     public AudioSource ffAudioSource;
 
     public int currentVidSphere;
@@ -161,6 +163,8 @@ public void showRecticleDot ()
                 Debug.Log("No more lightsphers");
             }
         }
+
+        sceneChangeSphere.SetActive(false);
     }
 
     public void CancelBlinkTransit()
